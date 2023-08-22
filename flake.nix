@@ -30,8 +30,16 @@
           packages = with pkgs; [
             python311Full
             python311Packages.pip
-            python311Packages.jupyter-core
+            gcc
+            booster
+            virtualenv
+            gcc-unwrapped
           ];
+
+          shellHook = ''
+            # fixes libstdc++ issues and libgl.so issues
+            LD_LIBRARY_PATH=${pkgs.stdenv.cc.cc.lib}/lib/:/run/opengl-driver/lib/
+         '';
 
         };
       });
