@@ -1,47 +1,30 @@
 {
-  description = "Example C++ development environment for Zero to Nix";
-
-  # Flake inputs
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs"; # also valid: "nixpkgs"
-  };
-
-  # Flake outputs
-  outputs = { self, nixpkgs }:
-    let
-      # Systems supported
-      allSystems = [
-        "x86_64-linux" # 64-bit Intel/AMD Linux
-        "aarch64-linux" # 64-bit ARM Linux
-        "x86_64-darwin" # 64-bit Intel macOS
-        "aarch64-darwin" # 64-bit ARM macOS
-      ];
-
-      # Helper to provide system-specific attributes
-      forAllSystems = f: nixpkgs.lib.genAttrs allSystems (system: f {
-        pkgs = import nixpkgs { inherit system; };
-      });
-    in
-    {
-      # Development environment output
-      devShells = forAllSystems ({ pkgs }: {
-        default = pkgs.mkShell {
-          # The Nix packages provided in the environment
-          packages = with pkgs; [
-            python311Full
-            python311Packages.pip
-            gcc
-            booster
-            virtualenv
-            gcc-unwrapped
-          ];
-
-          shellHook = ''
-            # fixes libstdc++ issues and libgl.so issues
-            LD_LIBRARY_PATH=${pkgs.stdenv.cc.cc.lib}/lib/:/run/opengl-driver/lib/
-         '';
-
-        };
-      });
+    nixpkgs = {
+      url = "github:nixos/nixpkgs/nixos-23.05";
     };
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+    };
+  };
+  outputs = { nixpkgs, flake-utils, ... }: flake-utils.lib.eachDefaultSystem (system:
+    let
+      pkgs = import nixpkgs {
+        inherit system;
+      };
+    in rec {
+      devShell = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          (python3.withPackages(ps: with ps; [
+            ipython
+            jupyter
+            numpy
+            pandas
+            tensorflow
+          ]))
+        ];
+      };
+    }
+  );
 }
+
