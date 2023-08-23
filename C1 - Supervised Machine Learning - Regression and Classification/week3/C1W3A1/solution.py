@@ -16,6 +16,7 @@ class LogisticRegressor:
         self.lambda_ = lambda_
 
     def map_features(self, degree):
+        """Using Feature engineering to convert input data to useful features"""
         np.random.seed(1)
         x1 = np.atleast_1d(self.x[:, 0])
         x2 = np.atleast_1d(self.x[:, 1])
