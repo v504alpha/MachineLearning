@@ -15,12 +15,16 @@
     in rec {
       devShell = pkgs.mkShell {
         buildInputs = with pkgs; [
+            gcc
+            gcc-unwrapped
           (python3.withPackages(ps: with ps; [
             ipython
             jupyter
             numpy
             pandas
+            matplotlib
             tensorflow
+            keras
           ]))
         ];
       };
