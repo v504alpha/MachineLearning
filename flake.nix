@@ -25,6 +25,7 @@
             matplotlib
             tensorflow
             keras
+            ipympl
           ]))
         ];
       };
